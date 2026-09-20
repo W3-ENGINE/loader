@@ -9,10 +9,14 @@
   ▀██▀██▀       ▀█████▀      ▀█████▄██ ▀█▄▀████▄██▄██ ▀█▄▀█▄▄▄
                                              ██               
                                            ▀▀▀               
-        W-3 on top
 ]]--
 
 cloneref = cloneref or function(x) return x end
+
+if identifyexecutor and (identifyexecutor():lower():find("solara") or identifyexecutor():lower():find("xeno")) then
+    game.Players.LocalPlayer:Kick("Your executor is not supported, please use a better or executor \n\n https://weao.xyz")
+    return
+end
 
 repeat task.wait() until game:IsLoaded() and cloneref(game:GetService("ContentProvider")).RequestQueueSize <= 10
 
@@ -70,13 +74,15 @@ if not url then
     return
 end
 
-local ok_lib, lib_src = pcall(game.HttpGet, game, library)
+local ok_lib, lib_src = pcall(function() return game:HttpGet(library) end)
+if typeof(lib_src) == "Instance" and lib_src:IsA("StringValue") then lib_src = lib_src.Value end
 if ok_lib and type(lib_src) == "string" and #lib_src >= 10 then
     local lib_fn = loadstring(lib_src, "@W3/library")
     if lib_fn then pcall(lib_fn) end
 end
 
-local ok, src = pcall(game.HttpGet, game, url)
+local ok, src = pcall(function() return game:HttpGet(url) end)
+if typeof(src) == "Instance" and src:IsA("StringValue") then src = src.Value end
 if not ok or type(src) ~= "string" or #src < 10 then
     pcall(function() lp:Kick("failed to load") end)
     return

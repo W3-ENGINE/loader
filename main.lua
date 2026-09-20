@@ -9,7 +9,6 @@
   ▀██▀██▀       ▀█████▀      ▀█████▄██ ▀█▄▀████▄██▄██ ▀█▄▀█▄▄▄
                                              ██               
                                            ▀▀▀               
-        W-3 on top
 ]]--
 
 cloneref = cloneref or function(x) return x end

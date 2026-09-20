@@ -44,16 +44,21 @@ end
 writefile("W3/Version.txt", shared.version)
 
 local lp = cloneref(game:GetService("Players")).LocalPlayer
+local uis = cloneref(game:GetService("UserInputService"))
+
+local is_mobile = uis.TouchEnabled and not uis.KeyboardEnabled and not uis.MouseEnabled
 
 local library = "https://raw.githubusercontent.com/W3-ENGINE/Libraries/refs/heads/main/Nebula/library.lua"
 
 local muerto = "https://raw.githubusercontent.com/W3-ENGINE/Games/refs/heads/main/Muerto-County-Massacre/main.lua"
 
-local games = {
-    [{93978595733734}]                              = "https://raw.githubusercontent.com/W3-ENGINE/Games/refs/heads/main/Violence-District/main.lua", -- Violence District
-    [{17625359962}]                                 = "https://raw.githubusercontent.com/W3-ENGINE/Games/refs/heads/main/Rivals/main.lua",             -- Rivals
+local VD_PC     = "https://raw.githubusercontent.com/W3-ENGINE/Games/refs/heads/main/Violence-District/main.lua"
+local VD_MOBILE = "https://raw.githubusercontent.com/W3-ENGINE/Games/refs/heads/main/Violence-District/mobile.lua"
 
-    [{79931861025666, 9933703300, 137064506717617}] = muerto,                                                                                          -- Muerto County Massacre
+local games = {
+    [{93978595733734}]                              = is_mobile and VD_MOBILE or VD_PC,
+    [{17625359962}]                                 = "https://raw.githubusercontent.com/W3-ENGINE/Games/refs/heads/main/Rivals/main.lua",
+    [{79931861025666, 9933703300, 137064506717617}] = muerto,
 }
 
 local url
@@ -69,13 +74,15 @@ if not url then
     return
 end
 
-local ok_lib, lib_src = pcall(game.HttpGet, game, library)
+local ok_lib, lib_src = pcall(function() return game:HttpGet(library) end)
+if typeof(lib_src) == "Instance" and lib_src:IsA("StringValue") then lib_src = lib_src.Value end
 if ok_lib and type(lib_src) == "string" and #lib_src >= 10 then
     local lib_fn = loadstring(lib_src, "@W3/library")
     if lib_fn then pcall(lib_fn) end
 end
 
-local ok, src = pcall(game.HttpGet, game, url)
+local ok, src = pcall(function() return game:HttpGet(url) end)
+if typeof(src) == "Instance" and src:IsA("StringValue") then src = src.Value end
 if not ok or type(src) ~= "string" or #src < 10 then
     pcall(function() lp:Kick("failed to load") end)
     return
